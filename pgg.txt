@@ -1,0 +1,60 @@
+import bpy
+from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QPushButton, QLineEdit
+import numpy as np
+import matplotlib.pyplot as plt
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        self.setWindowTitle("Graph Drawer")
+        self.setGeometry(100, 100, 400, 200)
+
+        self.central_widget = QWidget()
+        self.setCentralWidget(self.central_widget)
+
+        layout = QVBoxLayout()
+        self.central_widget.setLayout(layout)
+
+        self.coord_x_edit = QLineEdit()
+        self.coord_x_edit.setPlaceholderText("Enter X coordinate")
+        layout.addWidget(self.coord_x_edit)
+
+        self.coord_y_edit = QLineEdit()
+        self.coord_y_edit.setPlaceholderText("Enter Y coordinate")
+        layout.addWidget(self.coord_y_edit)
+
+        draw_button = QPushButton("Draw Graph")
+        draw_button.clicked.connect(self.draw_graph)
+        layout.addWidget(draw_button)
+
+    def draw_graph(self):
+        try:
+            coord_x = float(self.coord_x_edit.text())
+            coord_y = float(self.coord_y_edit.text())
+
+            x = np.linspace(0, 10, 100)
+            y = np.sin(x + coord_x) * coord_y
+
+            plt.plot(x, y)
+            plt.xlabel('X')
+            plt.ylabel('Y')
+            plt.title('Graph')
+            plt.grid(True)
+            plt.show()
+        except ValueError:
+            print("Invalid input. Please enter valid coordinates.")
+
+def register():
+    bpy.utils.register_class(MainPanel)
+
+def unregister():
+    bpy.utils.unregister_class(MainPanel)
+
+if __name__ == "__main__":
+    app = QApplication([])
+
+    main_window = MainWindow()
+    main_window.show()
+
+    app.exec_()
